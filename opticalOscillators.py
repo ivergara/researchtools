@@ -32,7 +32,15 @@ class oscillatorModel(object):
         """Calculates the square of plasma frequency in eV^2 of
         the oscillator given its parameters."""
         pass
+    
 class Lorentzian(oscillatorModel):
+    """Lorentzian lineshape of the form 
+    
+        \epsilon(E) = \frac{ABE_c}{E_c^2-E^2-\imath BE}
+        
+        Where $A$ is the amplitude, $B$ the width, $E_c$ energy center. 
+        All values given in $eV$
+    """
     
     def __init__(self, amplitude, energy, width):
         """Defines a Lorenzian lineshape.
@@ -85,6 +93,7 @@ class Lorentzian(oscillatorModel):
             return self.amplitude*self.energy*self.width
             
 class Gaussian(oscillatorModel):
+    """Lorentzian lineshape."""
     
     def __init__(self, amplitude, energy, width):
         """Defines a Gaussian lineshape.
@@ -97,19 +106,19 @@ class Gaussian(oscillatorModel):
         width: width of the lineshape in eV
         """
         
-    def dielectricFunction(self, energy):
-        """Returns the complex dielectric function at the specified energy.
-        
-        input
-        =====
-        
-        energy: Specified (range) of values to return.
-        """
-        
-        def _realDF(self, energy):
-            pass
-    
-        def _imagDF(self, energy):
-            pass
-        
-        return _realDF(energy) + 1.j*_imagDF(energy)
+#    def dielectricFunction(self, energy):
+#        """Returns the complex dielectric function at the specified energy.
+#        
+#        input
+#        =====
+#        
+#        energy: Specified (range) of values to return.
+#        """
+#        
+#        def _realDF(self, energy):
+#            pass
+#    
+#        def _imagDF(self, energy):
+#            pass
+#        
+#        return _realDF(energy) + 1.j*_imagDF(energy)
