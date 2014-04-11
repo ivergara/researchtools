@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr 04 12:28:03 2013
-
-@author: vergara
+Transforms a reflectivity measurement to a format specified by WVase.
+Also can change the energy units, do windowing and striding of the data.
 
 ToDo
 
@@ -18,7 +17,7 @@ import Tkinter
 from tkFileDialog import askopenfilename, asksaveasfilename
 
 try:
-    from numpy import array
+    from numpy import array, loadtxt, savetxt
     from scipy.constants import physical_constants
 except ImportError:
     print "numpy and scipy have to be present."
@@ -54,30 +53,46 @@ def loadSpectra(spectraFile, unitTransform):
     output: wavelengths in the specified unit and spectra as numpy arrays.
     """
     
-    wavelength = []
-    signal = []
-    with open(spectraFile, 'rb') as f:
-        reader = csv.reader(f)
-        try:
-            for row in reader:
-                #Takes the string from the first element and splits it
-                row = row[0].split() 
-                wavelength.append(float(row[0]))
-                signal.append(float(row[1]))
-            print "Successful read!"
-                    
-        except csv.Error, e:
-            sys.exit("file %s, line %d: %s" % (input, reader.line_num, e))
+    wavelength, signal = loadtxt(spectraFile, unpack = True)    
+    
+#    with open(spectraFile, 'rb') as f:
+#        reader = csv.reader(f)
+#        try:
+#            for row in reader:
+#                #Takes the string from the first element and splits it
+#                row = row[0].split() 
+#                wavelength.append(float(row[0]))
+#                signal.append(float(row[1]))
+#            print "Successful read!"
+#                    
+#        except csv.Error, e:
+#            sys.exit("file %s, line %d: %s" % (input, reader.line_num, e))
 
     wavelength = array(wavelength)
     signal = array(signal)
+    
     unitTransform = 'electron volt-inverse meter relationship'
     transform = physical_constants[unitTransform][0]/100
     
     if unitTransform:
         wavelength /= transform
 
-    return array(wavelength), array(signal)
+    return wavelength, signal
+
+def saveSpectra(spectraFile, output = None):
+    """
+    Saves spectra with different requirements.
+    """
+
+    if output == "WVASE":
+        if dataType in 'Tt':
+        #thickness = raw_input("Set thickness in micrometers: ")
+            textType = 'pT'
+        elif dataType in 'Rr':
+            angle = float(raw_input("Set angle in degrees: "))
+            textType = 'pR'
+        desc = raw_input("Enter a description (optional): ")
+
     
 def main():
 
@@ -96,15 +111,7 @@ def main():
     print "Input filename: ", inputFilename
     
     dataType = raw_input("Define type T (Transmission) or R (Reflectivity): ")
-    
-    if dataType == 'T' or 't':
-        #thickness = raw_input("Set thickness in micrometers: ")
-        textType = 'pT'
-    elif dataType == 'R' or 'r':
-        angle = float(raw_input("Set angle in degrees: "))
-        textType = 'pR'
-        
-    desc = raw_input("Enter a description (optional): ")
+
     unit = raw_input("Define output units 0 (cm-1) or 1 (eV): ")
     
     if unit:
